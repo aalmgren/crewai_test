@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoAI - Drilling Data Analysis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 GeoAI - Drilling Data Analysis</h1>
+            <p>Upload CSV files to identify file types and required columns</p>
+        </header>
+
+        <div class="upload-section">
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-zone-content">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p class="drop-text">Drag and drop CSV files here</p>
+                    <p class="drop-subtext">or click to select files</p>
+                    <input type="file" id="fileInput" multiple accept=".csv" style="display: none;">
+                </div>
+            </div>
+
+            <div class="file-list" id="fileList"></div>
+
+            <div class="controls">
+                <button id="analyzeBtn" class="btn btn-primary" disabled>
+                    <span class="btn-text">Analyze Files</span>
+                    <span class="btn-loader" style="display: none;">⏳ Processing...</span>
+                </button>
+                <button id="clearBtn" class="btn btn-secondary">Clear</button>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <h2>Consolidated Column Summary</h2>
+            <div class="table-container">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>File Type</th>
+                            <th>Field</th>
+                            <th>Found Column</th>
+                            <th>Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="error-section" id="errorSection" style="display: none;">
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

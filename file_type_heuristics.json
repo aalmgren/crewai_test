@@ -1,0 +1,226 @@
+{
+  "context": {
+    "domain": "Mineral Resources Evaluation",
+    "description": "Files related to mineral resources evaluation databases, including drilling data, assays, lithology, and hole geometry"
+  },
+  "file_types": {
+    "Collar": {
+      "description": "Collar/header file containing basic information for each drilling hole",
+      "characteristics": {
+        "structure": "One row per hole (file is generally unique per hole)",
+        "hole_id_patterns": [
+          "BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "DRILL_HOLE", "BH", "BH_NO", 
+          "HOLE", "HOLE_NAME", "ID", "Furo", "FURO", "FuroID", "Furo_ID"
+        ],
+        "required_columns": {
+          "hole_id": {
+            "names": ["BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "BH", "HOLE"],
+            "type": "categorical/text",
+            "characteristics": "Unique hole identifier, usually with great variety of nomenclatures (e.g., DH0001, BH-001, DDH-1234)"
+          },
+          "coordinates": {
+            "required_count": 3,
+            "common_names": {
+              "x": ["X", "XCOLLAR", "EAST", "E", "X_UTM", "EASTING", "XCOORD"],
+              "y": ["Y", "YCOLLAR", "NORTH", "N", "Y_UTM", "NORTHING", "YCOORD"],
+              "z": ["Z", "ZCOLLAR", "ELEV", "ELEVATION", "RL", "Z_UTM", "ZCOORD"]
+            },
+            "type": "numeric",
+            "characteristics": "Spatial coordinates (UTM, local, etc.), values usually large (thousands for X/Y)"
+          }
+        },
+        "optional_columns": {
+          "depth": {
+            "names": ["DEPTH", "TOTAL_DEPTH", "LENGTH", "HOLE_LENGTH"],
+            "type": "numeric",
+            "range": [0, 10000],
+            "description": "Total hole depth in meters"
+          },
+          "dtype": {
+            "names": ["DTYPE", "DRILL_TYPE", "TYPE", "METHOD"],
+            "type": "categorical",
+            "common_values": ["RC", "DDH", "RAB", "AC", "DD", "Diamond", "Reverse Circulation"]
+          },
+          "diam": {
+            "names": ["DIAM", "DIAMETER", "SIZE", "HOLE_SIZE"],
+            "type": "categorical",
+            "common_values": ["BQ", "NQ", "HQ", "PQ", "AQ", "BQ2", "NQ2", "HQ2"]
+          }
+        },
+        "validation_rules": {
+          "coordinates_present": "Must have at least 3 coordinate columns (X, Y, Z or equivalents)",
+          "one_row_per_hole": "Generally one row per hole (may have duplicates, but structure is unique)",
+          "hole_id_unique": "BHID should have many unique values (each hole has an ID)"
+        }
+      }
+    },
+    "Survey": {
+      "description": "Survey file containing hole geometry data (dip, azimuth) along depth",
+      "characteristics": {
+        "structure": "Multiple rows per hole (measurements along depth)",
+        "hole_id_patterns": [
+          "BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "BH", "HOLE"
+        ],
+        "required_columns": {
+          "hole_id": {
+            "names": ["BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "BH"],
+            "type": "categorical/text",
+            "characteristics": "Hole identifier, appears multiple times (once per measurement)"
+          },
+          "dip": {
+            "names": ["DIP", "DIP_ANGLE", "INCLINATION", "INCL", "ANGLE", "MERGUHO"],
+            "type": "numeric",
+            "range": [-90, 90],
+            "validation": "Values between -90 (vertical down) and 90 (horizontal) degrees",
+            "characteristics": "Hole inclination angle relative to vertical"
+          },
+          "azimuth": {
+            "names": ["AZIMUTH", "AZIMUTE", "AZ", "BRG", "BEARING", "DIRECTION", "BRG_AZ"],
+            "type": "numeric",
+            "range": [0, 360],
+            "validation": "Values between 0 and 360 degrees (hole direction in horizontal plane)",
+            "characteristics": "Hole direction in horizontal plane"
+          },
+          "depth": {
+            "names": ["AT", "DEPTH", "FROM", "DEPTH_AT", "MEASURED_DEPTH", "MD"],
+            "type": "numeric",
+            "range": [0, 10000],
+            "validation": "Depth where measurement was taken, values should increase along the hole",
+            "characteristics": "Depth where measurement was taken"
+          }
+        },
+        "optional_columns": {
+        },
+        "validation_rules": {
+          "dip_range": "DIP must be between -90 and 90 degrees",
+          "azimuth_range": "AZIMUTH/BRG must be between 0 and 360 degrees",
+          "multiple_rows_per_hole": "Generally multiple rows per hole (measurements at different depths)",
+          "depth_progression": "If depth column exists, should increase along the hole"
+        }
+      }
+    },
+    "Assay": {
+      "description": "Assay file containing chemical element concentrations in depth intervals",
+      "characteristics": {
+        "structure": "Multiple rows per hole (depth intervals with grades)",
+        "hole_id_patterns": [
+          "BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "BH", "HOLE"
+        ],
+        "required_columns": {
+          "hole_id": {
+            "names": ["BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "BH"],
+            "type": "categorical/text",
+            "characteristics": "Hole identifier, appears multiple times"
+          },
+          "depth_intervals": {
+            "from": {
+              "names": ["FROM", "FROM_DEPTH", "START", "START_DEPTH", "TOP", "TOP_DEPTH"],
+              "type": "numeric",
+              "range": [0, 10000]
+            },
+            "to": {
+              "names": ["TO", "TO_DEPTH", "END", "END_DEPTH", "BOTTOM", "BOTTOM_DEPTH"],
+              "type": "numeric",
+              "range": [0, 10000]
+            },
+            "validation": "TO must be greater than FROM for each interval"
+          },
+          "element_columns": {
+            "description": "Columns with chemical element names or their compounds",
+            "common_elements": [
+              "Au", "Ag", "Cu", "Fe", "Zn", "Pb", "Ni", "Co", "Mn", "Cr", 
+              "Ti", "V", "Mo", "W", "Sn", "Al", "Si", "Mg", "Ca", "Na", "K",
+              "P", "S", "As", "Sb", "Bi", "Te", "Se", "Cd", "Hg"
+            ],
+            "compound_patterns": [
+              "Au_ppm", "Cu_%", "Fe2O3", "Al2O3", "SiO2", "TiO2", "P2O5",
+              "Au_gpt", "Cu_pct", "Fe_pct", "Ni_ppm", "Zn_ppm"
+            ],
+            "type": "numeric",
+            "range": [0, 1000000],
+            "characteristics": "Values usually in ppm, %, g/t, or similar units"
+          }
+        },
+        "optional_columns": {
+          "target": {
+            "names": ["TARGET", "ZONE", "DOMAIN", "ORE_TYPE"],
+            "type": "categorical",
+            "description": "Mineralized zone or domain"
+          }
+        },
+        "validation_rules": {
+          "interval_validity": "TO > FROM for each interval",
+          "element_values": "Element values must be non-negative and within reasonable ranges",
+          "multiple_rows_per_hole": "Generally multiple rows per hole (different intervals)"
+        }
+      }
+    },
+    "Lithology": {
+      "description": "Lithology file containing rock type classification in depth intervals",
+      "characteristics": {
+        "structure": "Multiple rows per hole (depth intervals with lithological classification)",
+        "hole_id_patterns": [
+          "BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "BH", "HOLE"
+        ],
+        "required_columns": {
+          "hole_id": {
+            "names": ["BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "BH"],
+            "type": "categorical/text"
+          },
+          "depth_intervals": {
+            "from": {
+              "names": ["FROM", "FROM_DEPTH", "START", "TOP"],
+              "type": "numeric"
+            },
+            "to": {
+              "names": ["TO", "TO_DEPTH", "END", "BOTTOM"],
+              "type": "numeric"
+            }
+          },
+          "lithology_code": {
+            "names": ["LITO", "LITHOLOGY", "LITH", "ROCK_TYPE", "ROCK", "LITH_CODE"],
+            "type": "categorical",
+            "common_values": [
+              "LAT", "SAP", "FR", "BR", "QTZ", "GR", "GN", "SCH", "SH", "SL",
+              "BS", "AND", "DAC", "RHY", "BAS", "GAB", "DOL", "LIM", "MAR"
+            ],
+            "characteristics": "Short codes (usually 2-4 letters) representing rock types"
+          }
+        },
+        "validation_rules": {
+          "interval_validity": "TO > FROM",
+          "lithology_categorical": "Lithology column must be categorical with limited values",
+          "multiple_rows_per_hole": "Multiple rows per hole"
+        }
+      }
+    },
+    "Density": {
+      "description": "Density file containing density values in depth intervals",
+      "characteristics": {
+        "structure": "Multiple rows per hole (intervals with density measurements)",
+        "required_columns": {
+          "hole_id": {
+            "names": ["BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "BH"],
+            "type": "categorical/text"
+          },
+          "depth_intervals": {
+            "from": ["FROM", "FROM_DEPTH", "START", "TOP"],
+            "to": ["TO", "TO_DEPTH", "END", "BOTTOM"]
+          },
+          "density": {
+            "names": ["DENSITY", "RHO", "RHO_", "DEN", "DENS", "SG", "SPECIFIC_GRAVITY"],
+            "type": "numeric",
+            "range": [1.0, 10.0],
+            "validation": "Typical values between 1.5 and 5.0 g/cm³ for rocks",
+            "characteristics": "Density in g/cm³"
+          }
+        },
+        "validation_rules": {
+          "density_range": "Density between 1.0 and 10.0 g/cm³",
+          "interval_validity": "TO > FROM"
+        }
+      }
+    }
+  }
+}
+

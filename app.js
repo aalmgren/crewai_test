@@ -1,5 +1,10 @@
-// API endpoint - change this to your backend URL
-const API_URL = 'http://localhost:5000/analyze';
+// API endpoint - configure this to your backend URL
+// For local development: 'http://localhost:5000/analyze'
+// For production: 'https://your-backend.onrender.com/analyze' (or Railway, etc.)
+const API_URL = process.env.API_URL || 'http://localhost:5000/analyze';
+
+// If you're using GitHub Pages, you'll need to set this to your deployed backend URL
+// Example: const API_URL = 'https://geoai-backend.onrender.com/analyze';
 
 // Elements
 const dropZone = document.getElementById('dropZone');

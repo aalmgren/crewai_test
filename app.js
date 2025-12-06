@@ -196,14 +196,19 @@ window.removeFile = removeFile;
 // Token stats functions
 async function loadTokenStats() {
     try {
-        const statsUrl = API_URL.replace('/analyze', '/stats');
+        // Get base URL (remove /analyze if present)
+        const baseUrl = API_URL.replace('/analyze', '');
+        const statsUrl = `${baseUrl}/stats`;
         const response = await fetch(statsUrl);
         if (response.ok) {
             const stats = await response.json();
             updateTokenStats(stats);
+        } else {
+            console.warn('Stats endpoint not available:', response.status);
         }
     } catch (error) {
-        console.error('Error loading stats:', error);
+        // Silently fail - stats are optional
+        console.warn('Could not load stats (this is OK if backend is not running):', error.message);
     }
 }
 

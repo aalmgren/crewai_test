@@ -287,16 +287,27 @@ async function loadTokenStats() {
         // Get base URL (remove /analyze if present)
         const baseUrl = API_URL.replace('/analyze', '');
         const statsUrl = `${baseUrl}/stats`;
-        const response = await fetch(statsUrl);
+        const response = await fetch(statsUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         if (response.ok) {
             const stats = await response.json();
             updateTokenStats(stats);
         } else {
-            console.warn('Stats endpoint not available:', response.status);
+            // Silently fail - stats are optional, backend might be down
+            if (response.status !== 502 && response.status !== 503) {
+                console.warn('Stats endpoint not available:', response.status);
+            }
         }
     } catch (error) {
-        // Silently fail - stats are optional
-        console.warn('Could not load stats (this is OK if backend is not running):', error.message);
+        // Silently fail - stats are optional, backend might be down or CORS issue
+        // Only log if it's not a network/CORS error
+        if (!error.message.includes('Failed to fetch') && !error.message.includes('CORS')) {
+            console.warn('Could not load stats:', error.message);
+        }
     }
 }
 

@@ -10,7 +10,14 @@ from crewai_test import run_analysis_api, format_consolidated_summary_json
 from token_tracker import get_current_stats, reset_stats
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for GitHub Pages
+# Enable CORS for GitHub Pages and all origins
+CORS(app, resources={
+    r"/*": {
+        "origins": ["https://aalmgren.github.io", "http://localhost:*", "http://192.168.*"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 @app.route('/')
 def index():

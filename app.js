@@ -236,20 +236,12 @@ function updateTokenStats(stats) {
     statsDiv.innerHTML = `
         <div class="stats-grid">
             <div class="stat-item">
-                <span class="stat-label">Requests:</span>
-                <span class="stat-value">${requests}</span>
-            </div>
-            <div class="stat-item">
                 <span class="stat-label">Tokens:</span>
                 <span class="stat-value">${totalTokens.toLocaleString()}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">Cost:</span>
                 <span class="stat-value">$${cost.toFixed(4)}</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Avg:</span>
-                <span class="stat-value">$${requests > 0 ? (cost / requests).toFixed(4) : '0.0000'}</span>
             </div>
         </div>
     `;

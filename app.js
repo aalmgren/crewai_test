@@ -23,6 +23,10 @@ const resultsSection = document.getElementById('resultsSection');
 const resultsTableBody = document.getElementById('resultsTableBody');
 const errorSection = document.getElementById('errorSection');
 const errorMessage = document.getElementById('errorMessage');
+const progressSection = document.getElementById('progressSection');
+const progressBar = document.getElementById('progressBar');
+const progressText = document.getElementById('progressText');
+const progressLogs = document.getElementById('progressLogs');
 
 let selectedFiles = [];
 
@@ -102,6 +106,9 @@ analyzeBtn.addEventListener('click', async () => {
     
     hideError();
     resultsSection.style.display = 'none';
+    showProgress();
+    
+    let progressInterval = null;
     
     try {
         const formData = new FormData();
@@ -109,15 +116,25 @@ analyzeBtn.addEventListener('click', async () => {
             formData.append('files', file);
         });
         
+        // Simulate progress while waiting
+        progressInterval = simulateProgress(selectedFiles.length);
+        
         const response = await fetch(API_URL, {
             method: 'POST',
             body: formData
         });
         
+        if (progressInterval) {
+            clearInterval(progressInterval);
+        }
+        
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.error || 'Analysis failed');
         }
+        
+        updateProgress(100, 'Análise concluída!');
+        addLog('Processamento finalizado com sucesso', 'success');
         
         const data = await response.json();
         
@@ -130,14 +147,79 @@ analyzeBtn.addEventListener('click', async () => {
             throw new Error('Analysis failed');
         }
         
+        setTimeout(() => {
+            hideProgress();
+        }, 2000);
+        
     } catch (error) {
+        if (progressInterval) {
+            clearInterval(progressInterval);
+        }
+        hideProgress();
         showError(`Error: ${error.message}`);
+        addLog(`Erro: ${error.message}`, 'error');
     } finally {
         analyzeBtn.disabled = false;
         analyzeBtn.querySelector('.btn-text').style.display = 'inline';
         analyzeBtn.querySelector('.btn-loader').style.display = 'none';
     }
 });
+
+function showProgress() {
+    progressSection.style.display = 'block';
+    progressBar.style.width = '0%';
+    progressText.textContent = 'Iniciando análise...';
+    progressLogs.innerHTML = '';
+    addLog('Preparando arquivos para análise...', 'processing');
+}
+
+function hideProgress() {
+    progressSection.style.display = 'none';
+}
+
+function updateProgress(percent, text) {
+    progressBar.style.width = percent + '%';
+    if (text) {
+        progressText.textContent = text;
+    }
+}
+
+function addLog(message, type = 'processing') {
+    const logEntry = document.createElement('div');
+    logEntry.className = `log-entry ${type}`;
+    logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+    progressLogs.appendChild(logEntry);
+    progressLogs.scrollTop = progressLogs.scrollHeight;
+}
+
+function simulateProgress(fileCount) {
+    let progress = 0;
+    const steps = [
+        { percent: 10, text: 'Enviando arquivos...', log: 'Enviando arquivos para o servidor...' },
+        { percent: 20, text: 'Analisando estrutura...', log: 'Analisando estrutura dos arquivos CSV...' },
+        { percent: 30, text: 'Identificando tipos...', log: 'Identificando tipos de arquivo (Collar, Survey, Assay, etc.)...' },
+        { percent: 50, text: 'Identificando colunas...', log: 'Identificando colunas obrigatórias...' },
+        { percent: 70, text: 'Validando dados...', log: 'Validando identificações...' },
+        { percent: 85, text: 'Gerando resumo...', log: 'Gerando tabela consolidada...' },
+        { percent: 95, text: 'Finalizando...', log: 'Preparando resultados...' }
+    ];
+    
+    let stepIndex = 0;
+    
+    const interval = setInterval(() => {
+        if (stepIndex < steps.length) {
+            const step = steps[stepIndex];
+            updateProgress(step.percent, step.text);
+            addLog(step.log, 'processing');
+            stepIndex++;
+        } else if (progress < 95) {
+            progress += 2;
+            updateProgress(progress, 'Processando...');
+        }
+    }, 3000); // Update every 3 seconds
+    
+    return interval;
+}
 
 function displayResults(results) {
     resultsTableBody.innerHTML = '';

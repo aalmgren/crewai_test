@@ -289,8 +289,84 @@ tbody tr:last-child td {
     line-height: 1.5;
 }
 
+.progress-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9ff;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 24px;
+    background: #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 12px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+.progress-text {
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 10px;
+    font-size: 0.95em;
+}
+
+.progress-logs {
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 0.85em;
+    color: #666;
+    line-height: 1.6;
+    font-family: 'Courier New', monospace;
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+}
+
+.progress-logs .log-entry {
+    margin-bottom: 4px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.progress-logs .log-entry::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: #667eea;
+}
+
+.progress-logs .log-entry.success {
+    color: #4caf50;
+}
+
+.progress-logs .log-entry.error {
+    color: #f44336;
+}
+
+.progress-logs .log-entry.processing {
+    color: #667eea;
+}
+
 .error-section {
-    padding: 40px;
+    padding: 20px;
     border-top: 2px solid #f0f0f0;
 }
 

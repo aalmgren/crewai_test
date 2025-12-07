@@ -80,7 +80,20 @@ def health():
 @app.route('/stats', methods=['GET'])
 def stats():
     """Get current token usage statistics"""
-    return jsonify(get_current_stats())
+    try:
+        stats = get_current_stats()
+        return jsonify(stats)
+    except Exception as e:
+        # Return default stats if there's an error reading the file
+        return jsonify({
+            "total_requests": 0,
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "total_cost": 0.0,
+            "model": "gpt-3.5-turbo",
+            "history": [],
+            "error": str(e)
+        }), 200  # Still return 200 to avoid breaking frontend
 
 @app.route('/stats/reset', methods=['POST'])
 def reset_stats_endpoint():

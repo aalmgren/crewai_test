@@ -3,9 +3,9 @@ services:
     name: geoai-backend
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python api.py
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 300 api:app
     envVars:
       - key: OPENAI_API_KEY
         sync: false  # You'll need to set this manually in Render dashboard
-    plan: free
+    plan: starter
 

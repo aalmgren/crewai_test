@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: geoai-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python api.py
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false  # You'll need to set this manually in Render dashboard
+    plan: free
+

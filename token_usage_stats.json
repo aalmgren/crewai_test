@@ -1,0 +1,190 @@
+{
+  "total_input_tokens": 16872,
+  "total_output_tokens": 1814,
+  "total_requests": 18,
+  "total_cost": 0.011157,
+  "model": "gpt-3.5-turbo",
+  "last_updated": "2025-12-06T21:59:08.649884",
+  "requests": [
+    {
+      "timestamp": "2025-12-06T20:47:07.543581",
+      "input_tokens": 1289,
+      "output_tokens": 142,
+      "total_tokens": 1431,
+      "cost": 0.0008575,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T20:47:09.829857",
+      "input_tokens": 607,
+      "output_tokens": 128,
+      "total_tokens": 735,
+      "cost": 0.0004955000000000001,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T20:47:13.943734",
+      "input_tokens": 1364,
+      "output_tokens": 100,
+      "total_tokens": 1464,
+      "cost": 0.0008320000000000001,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T20:47:14.330933",
+      "input_tokens": 519,
+      "output_tokens": 7,
+      "total_tokens": 526,
+      "cost": 0.00027,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T20:47:19.892716",
+      "input_tokens": 1422,
+      "output_tokens": 145,
+      "total_tokens": 1567,
+      "cost": 0.0009285,
+      "model": "gpt-3.5-turbo",
+      "file": "survey",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T20:47:20.342401",
+      "input_tokens": 714,
+      "output_tokens": 7,
+      "total_tokens": 721,
+      "cost": 0.0003675,
+      "model": "gpt-3.5-turbo",
+      "file": "survey",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T20:50:21.079303",
+      "input_tokens": 1315,
+      "output_tokens": 171,
+      "total_tokens": 1486,
+      "cost": 0.000914,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T20:50:22.131538",
+      "input_tokens": 663,
+      "output_tokens": 7,
+      "total_tokens": 670,
+      "cost": 0.000342,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T20:50:26.208596",
+      "input_tokens": 1388,
+      "output_tokens": 96,
+      "total_tokens": 1484,
+      "cost": 0.000838,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T20:50:27.222439",
+      "input_tokens": 539,
+      "output_tokens": 7,
+      "total_tokens": 546,
+      "cost": 0.00028000000000000003,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T20:50:30.454767",
+      "input_tokens": 1061,
+      "output_tokens": 379,
+      "total_tokens": 1440,
+      "cost": 0.001099,
+      "model": "gpt-3.5-turbo",
+      "file": "survey",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T20:50:31.476833",
+      "input_tokens": 586,
+      "output_tokens": 7,
+      "total_tokens": 593,
+      "cost": 0.00030349999999999995,
+      "model": "gpt-3.5-turbo",
+      "file": "survey",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T21:58:57.106860",
+      "input_tokens": 1300,
+      "output_tokens": 143,
+      "total_tokens": 1443,
+      "cost": 0.0008645,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T21:58:58.343201",
+      "input_tokens": 620,
+      "output_tokens": 7,
+      "total_tokens": 627,
+      "cost": 0.0003205,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T21:59:03.299615",
+      "input_tokens": 1354,
+      "output_tokens": 148,
+      "total_tokens": 1502,
+      "cost": 0.0008990000000000001,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T21:59:04.360106",
+      "input_tokens": 557,
+      "output_tokens": 7,
+      "total_tokens": 564,
+      "cost": 0.00028900000000000003,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T21:59:08.198623",
+      "input_tokens": 1061,
+      "output_tokens": 306,
+      "total_tokens": 1367,
+      "cost": 0.0009895,
+      "model": "gpt-3.5-turbo",
+      "file": "survey",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T21:59:08.649884",
+      "input_tokens": 513,
+      "output_tokens": 7,
+      "total_tokens": 520,
+      "cost": 0.000267,
+      "model": "gpt-3.5-turbo",
+      "file": "survey",
+      "task": "validation"
+    }
+  ]
+}

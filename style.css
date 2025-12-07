@@ -8,7 +8,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    padding: 20px;
+    padding: 10px;
     color: #333;
 }
 
@@ -24,71 +24,76 @@ body {
 header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 40px;
+    padding: 15px 20px;
     text-align: center;
+    position: relative;
 }
 
 header h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-    font-weight: 700;
+    font-size: 1.4em;
+    margin: 0 0 5px 0;
+    font-weight: 600;
+    line-height: 1.3;
 }
 
-header p {
-    font-size: 1.1em;
+header .subtitle {
+    font-size: 0.85em;
     opacity: 0.9;
+    margin: 0;
+    font-weight: 400;
 }
 
 .token-stats {
-    background: linear-gradient(135deg, #f8f9ff 0%, #e8ebff 100%);
-    padding: 30px 40px;
-    border-bottom: 2px solid #e0e0e0;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75em;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .stat-item {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    display: inline-block;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    text-align: left;
 }
 
 .stat-label {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 8px;
-    font-weight: 500;
+    font-size: 0.7em;
+    opacity: 0.8;
+    margin-right: 4px;
 }
 
 .stat-value {
-    font-size: 1.8em;
-    font-weight: 700;
-    color: #667eea;
-    margin-bottom: 4px;
+    font-size: 0.85em;
+    font-weight: 600;
+    display: inline;
 }
 
 .stat-detail {
-    font-size: 0.8em;
-    color: #888;
-    margin-top: 4px;
+    display: none;
 }
 
 .upload-section {
-    padding: 40px;
+    padding: 20px;
 }
 
 .drop-zone {
     border: 3px dashed #667eea;
     border-radius: 12px;
-    padding: 60px;
+    padding: 30px;
     text-align: center;
     background: #f8f9ff;
     cursor: pointer;
@@ -113,38 +118,41 @@ header p {
 
 .drop-zone svg {
     color: #667eea;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    width: 48px;
+    height: 48px;
 }
 
 .drop-text {
-    font-size: 1.3em;
+    font-size: 1em;
     font-weight: 600;
     color: #667eea;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .drop-subtext {
-    font-size: 1em;
+    font-size: 0.85em;
     color: #888;
 }
 
 .file-list {
-    margin-top: 30px;
+    margin-top: 15px;
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
 }
 
 .file-item {
     background: #f0f2ff;
     border: 2px solid #667eea;
-    border-radius: 8px;
-    padding: 12px 20px;
+    border-radius: 6px;
+    padding: 6px 12px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-weight: 500;
     color: #667eea;
+    font-size: 0.9em;
 }
 
 .file-item::before {
@@ -153,23 +161,23 @@ header p {
 }
 
 .controls {
-    margin-top: 30px;
+    margin-top: 15px;
     display: flex;
-    gap: 15px;
+    gap: 10px;
     justify-content: center;
 }
 
 .btn {
-    padding: 14px 32px;
+    padding: 10px 20px;
     border: none;
     border-radius: 8px;
-    font-size: 1.1em;
+    font-size: 0.95em;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .btn:disabled {
@@ -197,14 +205,14 @@ header p {
 }
 
 .results-section {
-    padding: 40px;
+    padding: 20px;
     border-top: 2px solid #f0f0f0;
 }
 
 .results-section h2 {
     color: #667eea;
-    margin-bottom: 30px;
-    font-size: 2em;
+    margin-bottom: 15px;
+    font-size: 1.3em;
 }
 
 .table-container {
@@ -225,15 +233,16 @@ thead {
 }
 
 th {
-    padding: 16px;
+    padding: 10px 12px;
     text-align: left;
     font-weight: 600;
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 td {
-    padding: 14px 16px;
+    padding: 8px 12px;
     border-bottom: 1px solid #f0f0f0;
+    font-size: 0.85em;
 }
 
 tbody tr:hover {

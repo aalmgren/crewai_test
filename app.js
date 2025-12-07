@@ -4,8 +4,14 @@
 // For production: Update this to your deployed backend URL (Render, Railway, etc.)
 // Example: 'https://geoai-backend.onrender.com/analyze'
 
-// TODO: Replace with your actual backend URL when deploying
-const API_URL = 'http://localhost:5000/analyze';
+// API URL - automatically detects environment
+const isProduction = window.location.hostname.includes('github.io') || 
+                     window.location.hostname.includes('onrender.com') ||
+                     (window.location.protocol === 'https:' && !window.location.hostname.includes('localhost'));
+
+const API_URL = isProduction 
+    ? 'https://crewai-test-tc2q.onrender.com/analyze'  // Production (Render)
+    : 'http://192.168.1.84:5000/analyze';  // Local development
 
 // Elements
 const dropZone = document.getElementById('dropZone');
@@ -213,15 +219,14 @@ async function loadTokenStats() {
 }
 
 function updateTokenStats(stats) {
-    // Create or update stats display
+    // Create or update stats display in header (top right corner)
     let statsDiv = document.getElementById('tokenStats');
     if (!statsDiv) {
         statsDiv = document.createElement('div');
         statsDiv.id = 'tokenStats';
         statsDiv.className = 'token-stats';
-        const container = document.querySelector('.container');
-        const uploadSection = document.querySelector('.upload-section');
-        container.insertBefore(statsDiv, uploadSection);
+        const header = document.querySelector('header');
+        header.appendChild(statsDiv);
     }
     
     const totalTokens = stats.total_tokens || (stats.total_input_tokens + stats.total_output_tokens);
@@ -231,22 +236,20 @@ function updateTokenStats(stats) {
     statsDiv.innerHTML = `
         <div class="stats-grid">
             <div class="stat-item">
-                <div class="stat-label">Total Requests</div>
-                <div class="stat-value">${requests.toLocaleString()}</div>
+                <span class="stat-label">Requests:</span>
+                <span class="stat-value">${requests}</span>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Total Tokens</div>
-                <div class="stat-value">${totalTokens.toLocaleString()}</div>
-                <div class="stat-detail">Input: ${(stats.total_input_tokens || 0).toLocaleString()} | Output: ${(stats.total_output_tokens || 0).toLocaleString()}</div>
+                <span class="stat-label">Tokens:</span>
+                <span class="stat-value">${totalTokens.toLocaleString()}</span>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Total Cost</div>
-                <div class="stat-value">$${cost.toFixed(4)}</div>
-                <div class="stat-detail">Model: ${stats.model || 'gpt-3.5-turbo'}</div>
+                <span class="stat-label">Cost:</span>
+                <span class="stat-value">$${cost.toFixed(4)}</span>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Avg per Request</div>
-                <div class="stat-value">$${requests > 0 ? (cost / requests).toFixed(4) : '0.0000'}</div>
+                <span class="stat-label">Avg:</span>
+                <span class="stat-value">$${requests > 0 ? (cost / requests).toFixed(4) : '0.0000'}</span>
             </div>
         </div>
     `;

@@ -25,8 +25,17 @@ PRICING = {
 STATS_FILE = "token_usage_stats.json"
 
 def get_stats_file_path():
-    """Get path to stats file"""
-    return Path(STATS_FILE)
+    """Get path to stats file - use persistent directory on Render"""
+    # On Render, the /opt/render/project/src directory persists across deployments
+    # Check if we're on Render by looking for RENDER environment variable
+    if os.environ.get('RENDER') or os.path.exists('/opt/render'):
+        # Render production - use persistent directory
+        persistent_dir = Path("/opt/render/project/src")
+        persistent_dir.mkdir(parents=True, exist_ok=True)
+        return persistent_dir / STATS_FILE
+    else:
+        # Local development - use current directory
+        return Path(STATS_FILE)
 
 def load_stats():
     """Load usage statistics from file"""

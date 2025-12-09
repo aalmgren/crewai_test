@@ -461,8 +461,16 @@ tbody tr.rejected:hover {
 }
 
 .disclaimer p {
-    margin: 0;
+    margin: 8px 0;
     line-height: 1.5;
+}
+
+.disclaimer p:first-child {
+    margin-top: 0;
+}
+
+.disclaimer p:last-child {
+    margin-bottom: 0;
 }
 
 .disclaimer strong {

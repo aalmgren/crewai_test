@@ -29,10 +29,13 @@ def create_llm():
     if not api_key:
         raise ValueError("OPENAI_API_KEY nao encontrada no arquivo .env")
     
-    # Usando GPT-3.5-turbo - modelo que funciona na sua conta
+    # Modelo preferido: GPT-4o (melhor custo-benefício e precisão)
+    # Fallback: GPT-3.5-turbo se 4o não estiver disponível
+    preferred_model = os.getenv("OPENAI_MODEL", "gpt-4o")  # Pode ser configurado via .env
+    
     return LLM(
-        model="gpt-3.5-turbo",  # Modelo disponível e funcional
-        temperature=0.2,
+        model=preferred_model,  # gpt-4o (recomendado) ou gpt-3.5-turbo (mais barato)
+        temperature=0.2,  # Baixa temperatura para respostas mais consistentes
     )
 
 
@@ -132,11 +135,13 @@ def create_file_type_agent(llm_instance):
     """Agente especializado em identificar tipos de arquivos de sondagem"""
     return Agent(
         role="File Type Classifier",
-        goal="Identify the type of drilling/mining data file based on structure and column names",
-        backstory="""You are an expert in mining and drilling data formats.
+        goal="Identify the type of drilling/mining data file based on structure and column names. Provide direct, specific answers without generic phrases.",
+        backstory="""You are an expert in mining and drilling data formats with 20+ years of experience.
         You know common file types like: assay (teores), lithology (litologia), 
         survey (dados de sondagem), collar (cabeçalho de furos), etc.
-        You analyze file structure, column names, and sample data to classify files.""",
+        You analyze file structure, column names, and sample data to classify files.
+        You provide direct, technical answers without unnecessary commentary or generic phrases.
+        You focus on facts, patterns, and specific evidence from the data.""",
         llm=llm_instance,
         verbose=True,
         allow_delegation=False,
@@ -148,11 +153,13 @@ def create_column_identifier_agent(llm_instance):
     """Agente especializado em identificar colunas obrigatórias"""
     return Agent(
         role="Required Column Identifier",
-        goal="Identify mandatory columns for drilling hole data: hole name, dip, azimuth, grade/assay columns, coordinates",
-        backstory="""You are a geostatistics expert specializing in drilling data from mineral resources evaluation databases.
+        goal="Identify mandatory columns for drilling hole data: hole name, dip, azimuth, grade/assay columns, coordinates. Provide specific column names and clear reasoning.",
+        backstory="""You are a geostatistics expert with 15+ years specializing in drilling data from mineral resources evaluation databases.
         You identify required columns for drilling hole data using detailed heuristics and patterns.
         You use column name patterns, data ranges, validation rules, and context to identify columns.
-        All column name patterns and validation rules are provided in the task description.""",
+        All column name patterns and validation rules are provided in the task description.
+        You provide direct, actionable answers with specific column names and clear technical reasoning.
+        Avoid generic phrases - focus on specific matches and evidence.""",
         llm=llm_instance,
         verbose=True,
         allow_delegation=False,
@@ -164,10 +171,12 @@ def create_validator_agent(llm_instance):
     """Agente que valida e consolida as identificações"""
     return Agent(
         role="Data Validator",
-        goal="Validate and consolidate column identifications from previous analysis",
-        backstory="""You are a quality assurance specialist for drilling data.
+        goal="Validate and consolidate column identifications from previous analysis. Provide clear validation status and specific issues if any.",
+        backstory="""You are a quality assurance specialist for drilling data with 10+ years of experience.
         You review identifications made by other agents and ensure consistency.
-        You check if all required columns were found and if the identifications make sense.""",
+        You check if all required columns were found and if the identifications make sense.
+        You provide direct, factual validation reports without generic commentary.
+        Focus on specific validation results, missing columns, and any inconsistencies.""",
         llm=llm_instance,
         verbose=True,
         allow_delegation=False,
@@ -333,10 +342,13 @@ CONFIDENCE: [high/medium/low]
 REASONING: [brief explanation]
 USE CASE: [what this file is used for]"""
 
+    # Add instruction to avoid generic phrases
+    description_with_instruction = description + "\n\nIMPORTANT: Provide your answer directly in the OUTPUT FORMAT specified above. Do not use generic phrases like 'I now can give a great answer' or 'I can now provide'. Start directly with 'FILE TYPE:' and provide specific, technical analysis based on the data provided."
+    
     return Task(
-        description=description,
+        description=description_with_instruction,
         agent=agent,
-        expected_output="File type identification with detailed reasoning based on heuristics"
+        expected_output="File type identification with detailed reasoning based on heuristics. Format: FILE TYPE: [name], CONFIDENCE: [level], REASONING: [specific analysis], USE CASE: [description]"
     )
 
 
@@ -750,7 +762,16 @@ IMPORTANT:
 - If a column type is NOT listed above, it means it's NOT expected for this file type
 
 OUTPUT FORMAT:
-{output_format_text}"""
+{output_format_text}
+
+IMPORTANT INSTRUCTIONS:
+- Provide your answer DIRECTLY in the format specified above
+- Do NOT use generic phrases like "I now can give a great answer" or "I can now provide"
+- Start immediately with the field name (e.g., "HOLE NAME:", "DIP:", etc.)
+- Be SPECIFIC: use actual column names from the file, not generic descriptions
+- Provide CLEAR reasoning based on the patterns and data characteristics shown above
+- If a column matches, state the exact column name and why it matches
+- If not found, state "NOT FOUND" and explain why (e.g., "No column matches patterns X, Y, Z and data characteristics don't match")"""
     else:
         # Fallback - should not happen if heuristics are loaded
         description = f"""Identify required columns for drilling hole data in this file.
@@ -779,7 +800,7 @@ COORDINATES: X=[name], Y=[name], Z=[name] (confidence: [level]) - [reasoning]"""
     return Task(
         description=description,
         agent=agent,
-        expected_output="Identification of all required columns with confidence levels"
+        expected_output="Identification of all required columns with confidence levels. Format: [FIELD NAME]: [column name or NOT FOUND] (confidence: [level]) - [specific reasoning with column names and patterns matched]. Do not use generic phrases - start directly with field names."
     )
 
 
@@ -1292,12 +1313,14 @@ VALIDATION SUMMARY:
 - Coordinates: [status] ✓/✗
 
 FINAL RECOMMENDATIONS:
-[Any issues found or recommendations]"""
+[Any issues found or recommendations]
+
+IMPORTANT: Provide your answer directly. Do not use generic phrases like "I now can give a great answer". Start immediately with "VALIDATION SUMMARY:" and provide specific validation results."""
 
     return Task(
         description=description,
         agent=agent,
-        expected_output="Validated and consolidated summary"
+        expected_output="Validated and consolidated summary with specific validation status for each field (✓/✗) and clear recommendations. Format: VALIDATION SUMMARY: [specific results], FINAL RECOMMENDATIONS: [specific issues or OK]"
     )
 
 
@@ -1330,7 +1353,8 @@ def run_analysis(data_dir="data"):
     try:
         llm_instance = create_llm()
         print("LLM created successfully")
-        print(f"   Model: gpt-3.5-turbo\n")
+        model_name = llm_instance.model if hasattr(llm_instance, 'model') else os.getenv("OPENAI_MODEL", "gpt-4o")
+        print(f"   Model: {model_name}\n")
     except Exception as e:
         print(f"ERROR creating LLM: {e}")
         print("   Verify OPENAI_API_KEY is configured in .env file")
@@ -1537,7 +1561,7 @@ def run_analysis(data_dir="data"):
     return results, all_analyses_from_results
 
 
-def run_analysis_api(data_dir):
+def run_analysis_api(data_dir, session_id=None, logger=None):
     """API version - returns results without printing"""
     import sys
     from io import StringIO
@@ -1546,34 +1570,59 @@ def run_analysis_api(data_dir):
     old_stdout = sys.stdout
     sys.stdout = StringIO()
     
+    # Log function helper
+    def log(msg, level='info'):
+        if logger:
+            if level == 'info':
+                logger.info(f"Session {session_id}: {msg}")
+            elif level == 'debug':
+                logger.debug(f"Session {session_id}: {msg}")
+            elif level == 'error':
+                logger.error(f"Session {session_id}: {msg}")
+            elif level == 'warning':
+                logger.warning(f"Session {session_id}: {msg}")
+    
     try:
         # Load heuristics
+        log("Loading heuristics")
         heuristics = load_heuristics()
+        log(f"Heuristics loaded: {len(heuristics.get('file_types', {}))} file types")
         
         # Create LLM instance
+        log("Creating LLM instance")
         llm_instance = create_llm()
+        log("LLM instance created")
         
         # Discover files
+        log(f"Discovering files in {data_dir}")
         files = {}
         for filename in os.listdir(data_dir):
             if filename.endswith('.csv'):
                 file_key = filename[:-4]  # Remove .csv
                 files[file_key] = os.path.join(data_dir, filename)
         
+        log(f"Found {len(files)} CSV files: {list(files.keys())}")
         if not files:
             return []
         
         # Create agents
+        log("Creating agents")
         file_type_agent = create_file_type_agent(llm_instance)
         column_agent = create_column_identifier_agent(llm_instance)
         validator_agent = create_validator_agent(llm_instance)
+        log("Agents created")
         
         # First pass: Analyze all files
+        log("First pass: Analyzing all files structure")
         all_analyses = {}
         for file_key, file_path in files.items():
+            log(f"Analyzing structure of {file_key}")
             analysis = analyze_csv_structure(file_path)
             if "error" not in analysis:
                 all_analyses[file_key] = analysis
+                log(f"{file_key}: {len(analysis.get('columns', []))} columns, {analysis.get('rows', 0)} rows")
+            else:
+                log(f"{file_key}: Error in analysis - {analysis.get('error', 'Unknown')}", 'error')
         
         # Find common columns (ALWAYS initialize, even if empty for single file)
         common_columns = {}
@@ -1597,8 +1646,10 @@ def run_analysis_api(data_dir):
         
         # Process each file
         for file_key, file_path in files.items():
+            log(f"=== Processing file: {file_key} ===")
             analysis = analyze_csv_structure(file_path)
             if "error" in analysis:
+                log(f"{file_key}: Error in analysis - {analysis.get('error', 'Unknown')}", 'error')
                 # Still add to results with error info, don't skip
                 results.append({
                     "file": file_key,
@@ -1610,6 +1661,7 @@ def run_analysis_api(data_dir):
                 continue
             
             # TASK 1: Identify file type
+            log(f"{file_key}: TASK 1 - Identifying file type")
             task1 = create_file_type_task(file_type_agent, analysis, heuristics)
             crew1 = Crew(
                 agents=[file_type_agent],
@@ -1626,10 +1678,13 @@ def run_analysis_api(data_dir):
                     result1_str = str(result1.content) if result1.content else str(result1)
                 else:
                     result1_str = str(result1) if result1 else "No result"
-            except Exception:
-                result1_str = "Error identifying file type"
+                log(f"{file_key}: TASK 1 result: {result1_str[:500]}...")
+            except Exception as e:
+                result1_str = f"Error identifying file type: {str(e)}"
+                log(f"{file_key}: TASK 1 error: {str(e)}", 'error')
             
             # TASK 2: Identify columns
+            log(f"{file_key}: TASK 2 - Identifying columns")
             file_type_str = result1_str
             task2 = create_column_identification_task(column_agent, analysis, file_type_str, heuristics, common_columns)
             crew2 = Crew(
@@ -1648,15 +1703,20 @@ def run_analysis_api(data_dir):
                 else:
                     result2_str = str(result2)
                 
+                log(f"{file_key}: TASK 2 result: {result2_str[:1000]}...")
+                
                 # Track token usage
                 input_tokens = estimate_tokens(str(analysis) + str(file_type_str)) + 800  # Larger prompt
                 output_tokens = estimate_tokens(result2_str)
-                add_usage(input_tokens, output_tokens, model="gpt-3.5-turbo",
+                model_name = llm_instance.model if hasattr(llm_instance, 'model') else os.getenv("OPENAI_MODEL", "gpt-4o")
+                add_usage(input_tokens, output_tokens, model=model_name,
                          request_info={"file": file_key, "task": "column_identification"})
-            except Exception:
-                result2_str = "Error identifying columns"
+            except Exception as e:
+                result2_str = f"Error identifying columns: {str(e)}"
+                log(f"{file_key}: TASK 2 error: {str(e)}", 'error')
             
             # TASK 3: Validate
+            log(f"{file_key}: TASK 3 - Validating results")
             task3 = create_validation_task(validator_agent, result1, result2)
             crew3 = Crew(
                 agents=[validator_agent],
@@ -1674,13 +1734,17 @@ def run_analysis_api(data_dir):
                 else:
                     result3_str = str(result3)
                 
+                log(f"{file_key}: TASK 3 result: {result3_str[:500]}...")
+                
                 # Track token usage
                 input_tokens = estimate_tokens(str(result1_str) + str(result2_str)) + 200
                 output_tokens = estimate_tokens(result3_str)
-                add_usage(input_tokens, output_tokens, model="gpt-3.5-turbo",
+                model_name = llm_instance.model if hasattr(llm_instance, 'model') else os.getenv("OPENAI_MODEL", "gpt-4o")
+                add_usage(input_tokens, output_tokens, model=model_name,
                          request_info={"file": file_key, "task": "validation"})
-            except Exception:
-                result3_str = "Error validating"
+            except Exception as e:
+                result3_str = f"Error validating: {str(e)}"
+                log(f"{file_key}: TASK 3 error: {str(e)}", 'error')
             
             results.append({
                 "file": file_key,
@@ -1689,7 +1753,9 @@ def run_analysis_api(data_dir):
                 "validation": result3_str,
                 "analysis": analysis
             })
+            log(f"{file_key}: Processing complete")
         
+        log(f"All files processed. Total results: {len(results)}")
         return results
     
     finally:

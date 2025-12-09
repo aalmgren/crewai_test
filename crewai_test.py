@@ -29,9 +29,9 @@ def create_llm():
     if not api_key:
         raise ValueError("OPENAI_API_KEY nao encontrada no arquivo .env")
     
-    # Modelo preferido: GPT-4o (melhor custo-benefício e precisão)
-    # Fallback: GPT-3.5-turbo se 4o não estiver disponível
-    preferred_model = os.getenv("OPENAI_MODEL", "gpt-4o")  # Pode ser configurado via .env
+    # Modelo padrão: GPT-3.5-turbo (disponível na maioria das contas)
+    # Pode ser configurado via .env para usar gpt-4o ou gpt-4-turbo se disponível
+    preferred_model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")  # Pode ser configurado via .env
     
     return LLM(
         model=preferred_model,  # gpt-4o (recomendado) ou gpt-3.5-turbo (mais barato)
@@ -1353,7 +1353,7 @@ def run_analysis(data_dir="data"):
     try:
         llm_instance = create_llm()
         print("LLM created successfully")
-        model_name = llm_instance.model if hasattr(llm_instance, 'model') else os.getenv("OPENAI_MODEL", "gpt-4o")
+        model_name = llm_instance.model if hasattr(llm_instance, 'model') else os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
         print(f"   Model: {model_name}\n")
     except Exception as e:
         print(f"ERROR creating LLM: {e}")
@@ -1708,7 +1708,7 @@ def run_analysis_api(data_dir, session_id=None, logger=None):
                 # Track token usage
                 input_tokens = estimate_tokens(str(analysis) + str(file_type_str)) + 800  # Larger prompt
                 output_tokens = estimate_tokens(result2_str)
-                model_name = llm_instance.model if hasattr(llm_instance, 'model') else os.getenv("OPENAI_MODEL", "gpt-4o")
+                model_name = llm_instance.model if hasattr(llm_instance, 'model') else os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
                 add_usage(input_tokens, output_tokens, model=model_name,
                          request_info={"file": file_key, "task": "column_identification"})
             except Exception as e:
@@ -1717,7 +1717,8 @@ def run_analysis_api(data_dir, session_id=None, logger=None):
             
             # TASK 3: Validate
             log(f"{file_key}: TASK 3 - Validating results")
-            task3 = create_validation_task(validator_agent, result1, result2)
+            # Use result1_str and result2_str (always defined, even if error occurred)
+            task3 = create_validation_task(validator_agent, result1_str, result2_str)
             crew3 = Crew(
                 agents=[validator_agent],
                 tasks=[task3],
@@ -1739,7 +1740,7 @@ def run_analysis_api(data_dir, session_id=None, logger=None):
                 # Track token usage
                 input_tokens = estimate_tokens(str(result1_str) + str(result2_str)) + 200
                 output_tokens = estimate_tokens(result3_str)
-                model_name = llm_instance.model if hasattr(llm_instance, 'model') else os.getenv("OPENAI_MODEL", "gpt-4o")
+                model_name = llm_instance.model if hasattr(llm_instance, 'model') else os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
                 add_usage(input_tokens, output_tokens, model=model_name,
                          request_info={"file": file_key, "task": "validation"})
             except Exception as e:

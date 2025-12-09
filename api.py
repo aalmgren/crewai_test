@@ -245,7 +245,7 @@ def stats():
             "total_input_tokens": 0,
             "total_output_tokens": 0,
             "total_cost": 0.0,
-            "model": "gpt-3.5-turbo",
+            "model": "gpt-5.1",
             "history": [],
             "error": str(e)
         }), 200  # Still return 200 to avoid breaking frontend

@@ -129,8 +129,19 @@ analyzeBtn.addEventListener('click', async () => {
         }
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Analysis failed');
+            let errorMessage = `Server error (${response.status})`;
+            try {
+                const error = await response.json();
+                errorMessage = error.error || error.message || `Server error (${response.status})`;
+                if (error.traceback) {
+                    console.error('Server traceback:', error.traceback);
+                }
+            } catch (e) {
+                // Se não conseguir ler JSON, usar texto da resposta
+                const text = await response.text();
+                errorMessage = text || `Server error (${response.status}): ${response.statusText}`;
+            }
+            throw new Error(errorMessage);
         }
         
         updateProgress(100, 'Análise concluída!');

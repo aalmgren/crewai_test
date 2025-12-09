@@ -48,10 +48,12 @@
 
         <div class="results-section" id="resultsSection" style="display: none;">
             <h2>Consolidated Column Summary</h2>
+            <div id="approvalStats" class="approval-stats" style="display: none;"></div>
             <div class="table-container">
                 <table id="resultsTable">
                     <thead>
                         <tr>
+                            <th>Approve</th>
                             <th>File Type</th>
                             <th>Field</th>
                             <th>Found Column</th>
@@ -67,6 +69,10 @@
         <div class="error-section" id="errorSection" style="display: none;">
             <div class="error-message" id="errorMessage"></div>
         </div>
+
+        <footer class="disclaimer">
+            <p><strong>Disclaimer:</strong> This is an educational demo to show how AI agents work. The goal is to demonstrate agent capabilities, not necessarily to recognize files and columns (which wouldn't require agents). Do not send sensitive data (locations, assays) to public LLMs. Learn the tools and build your own customized scripts.</p>
+        </footer>
     </div>
 
     <script src="app.js"></script>

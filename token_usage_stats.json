@@ -1,10 +1,10 @@
 {
-  "total_input_tokens": 16872,
-  "total_output_tokens": 1814,
-  "total_requests": 18,
-  "total_cost": 0.011157,
+  "total_input_tokens": 78123,
+  "total_output_tokens": 6789,
+  "total_requests": 70,
+  "total_cost": 0.049245000000000025,
   "model": "gpt-3.5-turbo",
-  "last_updated": "2025-12-06T21:59:08.649884",
+  "last_updated": "2025-12-09T14:46:45.017963",
   "requests": [
     {
       "timestamp": "2025-12-06T20:47:07.543581",
@@ -184,6 +184,526 @@
       "cost": 0.000267,
       "model": "gpt-3.5-turbo",
       "file": "survey",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T22:06:47.836254",
+      "input_tokens": 1316,
+      "output_tokens": 173,
+      "total_tokens": 1489,
+      "cost": 0.0009175,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T22:06:48.879818",
+      "input_tokens": 665,
+      "output_tokens": 7,
+      "total_tokens": 672,
+      "cost": 0.000343,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T22:06:52.895923",
+      "input_tokens": 1369,
+      "output_tokens": 94,
+      "total_tokens": 1463,
+      "cost": 0.0008255000000000001,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T22:06:53.641414",
+      "input_tokens": 517,
+      "output_tokens": 7,
+      "total_tokens": 524,
+      "cost": 0.000269,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T22:06:59.783738",
+      "input_tokens": 1368,
+      "output_tokens": 262,
+      "total_tokens": 1630,
+      "cost": 0.001077,
+      "model": "gpt-3.5-turbo",
+      "file": "survey",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T22:07:01.641489",
+      "input_tokens": 776,
+      "output_tokens": 246,
+      "total_tokens": 1022,
+      "cost": 0.0007570000000000001,
+      "model": "gpt-3.5-turbo",
+      "file": "survey",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T22:08:35.300902",
+      "input_tokens": 1324,
+      "output_tokens": 138,
+      "total_tokens": 1462,
+      "cost": 0.0008690000000000001,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T22:08:36.022597",
+      "input_tokens": 638,
+      "output_tokens": 7,
+      "total_tokens": 645,
+      "cost": 0.0003295,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T22:08:39.340146",
+      "input_tokens": 1368,
+      "output_tokens": 141,
+      "total_tokens": 1509,
+      "cost": 0.0008955,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T22:08:39.760752",
+      "input_tokens": 564,
+      "output_tokens": 7,
+      "total_tokens": 571,
+      "cost": 0.00029249999999999995,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T22:08:43.357707",
+      "input_tokens": 1061,
+      "output_tokens": 305,
+      "total_tokens": 1366,
+      "cost": 0.000988,
+      "model": "gpt-3.5-turbo",
+      "file": "survey",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T22:08:43.890377",
+      "input_tokens": 513,
+      "output_tokens": 9,
+      "total_tokens": 522,
+      "cost": 0.00027,
+      "model": "gpt-3.5-turbo",
+      "file": "survey",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-06T22:38:24.892844",
+      "input_tokens": 1296,
+      "output_tokens": 176,
+      "total_tokens": 1472,
+      "cost": 0.000912,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-06T22:38:25.342832",
+      "input_tokens": 648,
+      "output_tokens": 7,
+      "total_tokens": 655,
+      "cost": 0.0003345,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:28:13.294683",
+      "input_tokens": 2229,
+      "output_tokens": 142,
+      "total_tokens": 2371,
+      "cost": 0.0013275000000000001,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:28:14.855918",
+      "input_tokens": 569,
+      "output_tokens": 7,
+      "total_tokens": 576,
+      "cost": 0.00029499999999999996,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:32:31.789157",
+      "input_tokens": 1422,
+      "output_tokens": 119,
+      "total_tokens": 1541,
+      "cost": 0.0008894999999999999,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:32:32.306508",
+      "input_tokens": 530,
+      "output_tokens": 7,
+      "total_tokens": 537,
+      "cost": 0.00027550000000000003,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:33:04.634886",
+      "input_tokens": 1200,
+      "output_tokens": 323,
+      "total_tokens": 1523,
+      "cost": 0.0010845,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:33:06.083130",
+      "input_tokens": 531,
+      "output_tokens": 7,
+      "total_tokens": 538,
+      "cost": 0.000276,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:33:11.566153",
+      "input_tokens": 1411,
+      "output_tokens": 115,
+      "total_tokens": 1526,
+      "cost": 0.0008780000000000001,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:33:11.993301",
+      "input_tokens": 515,
+      "output_tokens": 7,
+      "total_tokens": 522,
+      "cost": 0.000268,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:33:35.475902",
+      "input_tokens": 1444,
+      "output_tokens": 189,
+      "total_tokens": 1633,
+      "cost": 0.0010054999999999999,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:33:35.918139",
+      "input_tokens": 641,
+      "output_tokens": 7,
+      "total_tokens": 648,
+      "cost": 0.000331,
+      "model": "gpt-3.5-turbo",
+      "file": "assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:33:41.349630",
+      "input_tokens": 1446,
+      "output_tokens": 106,
+      "total_tokens": 1552,
+      "cost": 0.000882,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:33:42.179470",
+      "input_tokens": 541,
+      "output_tokens": 7,
+      "total_tokens": 548,
+      "cost": 0.000281,
+      "model": "gpt-3.5-turbo",
+      "file": "collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:33:47.423841",
+      "input_tokens": 1287,
+      "output_tokens": 196,
+      "total_tokens": 1483,
+      "cost": 0.0009375,
+      "model": "gpt-3.5-turbo",
+      "file": "lithology",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:33:47.896636",
+      "input_tokens": 652,
+      "output_tokens": 7,
+      "total_tokens": 659,
+      "cost": 0.0003365,
+      "model": "gpt-3.5-turbo",
+      "file": "lithology",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:35:45.579713",
+      "input_tokens": 2037,
+      "output_tokens": 135,
+      "total_tokens": 2172,
+      "cost": 0.0012209999999999999,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:35:47.100502",
+      "input_tokens": 624,
+      "output_tokens": 143,
+      "total_tokens": 767,
+      "cost": 0.0005265,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:35:51.239728",
+      "input_tokens": 2008,
+      "output_tokens": 422,
+      "total_tokens": 2430,
+      "cost": 0.001637,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:35:51.672856",
+      "input_tokens": 630,
+      "output_tokens": 7,
+      "total_tokens": 637,
+      "cost": 0.0003255,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:37:44.560060",
+      "input_tokens": 2035,
+      "output_tokens": 132,
+      "total_tokens": 2167,
+      "cost": 0.0012155000000000002,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:37:45.101214",
+      "input_tokens": 619,
+      "output_tokens": 7,
+      "total_tokens": 626,
+      "cost": 0.00031999999999999997,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:37:49.101529",
+      "input_tokens": 2260,
+      "output_tokens": 7,
+      "total_tokens": 2267,
+      "cost": 0.0011405,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:37:51.015981",
+      "input_tokens": 467,
+      "output_tokens": 184,
+      "total_tokens": 651,
+      "cost": 0.0005095,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:43:53.059947",
+      "input_tokens": 2405,
+      "output_tokens": 107,
+      "total_tokens": 2512,
+      "cost": 0.001363,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:43:53.549315",
+      "input_tokens": 711,
+      "output_tokens": 7,
+      "total_tokens": 718,
+      "cost": 0.00036599999999999995,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:44:12.619902",
+      "input_tokens": 2053,
+      "output_tokens": 201,
+      "total_tokens": 2254,
+      "cost": 0.0013280000000000002,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:44:13.062486",
+      "input_tokens": 707,
+      "output_tokens": 7,
+      "total_tokens": 714,
+      "cost": 0.00036399999999999996,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:44:48.041284",
+      "input_tokens": 2373,
+      "output_tokens": 214,
+      "total_tokens": 2587,
+      "cost": 0.0015075000000000002,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:44:48.457631",
+      "input_tokens": 787,
+      "output_tokens": 7,
+      "total_tokens": 794,
+      "cost": 0.000404,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:45:38.774171",
+      "input_tokens": 2234,
+      "output_tokens": 105,
+      "total_tokens": 2339,
+      "cost": 0.0012745,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:45:39.274014",
+      "input_tokens": 539,
+      "output_tokens": 7,
+      "total_tokens": 546,
+      "cost": 0.00028000000000000003,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:45:57.688610",
+      "input_tokens": 2234,
+      "output_tokens": 137,
+      "total_tokens": 2371,
+      "cost": 0.0013224999999999999,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:45:58.100833",
+      "input_tokens": 570,
+      "output_tokens": 7,
+      "total_tokens": 577,
+      "cost": 0.00029549999999999997,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:46:22.142831",
+      "input_tokens": 2286,
+      "output_tokens": 7,
+      "total_tokens": 2293,
+      "cost": 0.0011535000000000002,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:46:23.175710",
+      "input_tokens": 492,
+      "output_tokens": 9,
+      "total_tokens": 501,
+      "cost": 0.0002595,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:46:39.143232",
+      "input_tokens": 1973,
+      "output_tokens": 137,
+      "total_tokens": 2110,
+      "cost": 0.001192,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_assay",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:46:40.608229",
+      "input_tokens": 562,
+      "output_tokens": 152,
+      "total_tokens": 714,
+      "cost": 0.0005090000000000001,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_assay",
+      "task": "validation"
+    },
+    {
+      "timestamp": "2025-12-09T14:46:43.768948",
+      "input_tokens": 2299,
+      "output_tokens": 7,
+      "total_tokens": 2306,
+      "cost": 0.00116,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
+      "task": "column_identification"
+    },
+    {
+      "timestamp": "2025-12-09T14:46:45.017963",
+      "input_tokens": 505,
+      "output_tokens": 9,
+      "total_tokens": 514,
+      "cost": 0.000266,
+      "model": "gpt-3.5-turbo",
+      "file": "dh_collar",
       "task": "validation"
     }
   ]

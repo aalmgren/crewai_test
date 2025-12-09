@@ -70,7 +70,15 @@ def discover_files(data_dir="data"):
 def analyze_csv_structure(file_path):
     """Analyze CSV structure with detailed characteristics"""
     try:
-        df = pd.read_csv(file_path, nrows=100)  # Read first 100 rows for analysis
+        # Try to read CSV - use nrows to limit memory usage for large files
+        try:
+            df = pd.read_csv(file_path, nrows=100)  # Read first 100 rows for analysis
+        except pd.errors.EmptyDataError:
+            return {"error": "CSV file is empty"}
+        except pd.errors.ParserError as e:
+            return {"error": f"CSV parsing error: {str(e)}"}
+        except Exception as e:
+            return {"error": f"Error reading CSV file: {str(e)}"}
         
         analysis = {
             "filename": os.path.basename(file_path),
@@ -232,11 +240,49 @@ def create_file_type_task(agent, analysis, heuristics=None):
                 for rule_name, rule_desc in info['characteristics']['validation_rules'].items():
                     heuristics_text += f"    - {rule_name}: {rule_desc}\n"
         
+        # Extract filename hints from JSON heuristics
+        filename_lower = analysis['filename'].lower()
+        filename_hints = []
+        
+        # Check each file type's filename_patterns from heuristics
+        for file_type, file_info in heuristics["file_types"].items():
+            if "filename_patterns" in file_info:
+                patterns = file_info["filename_patterns"]
+                matched_patterns = []
+                for pattern in patterns:
+                    # Handle wildcard patterns (*pattern* means contains, pattern means exact or contains)
+                    if pattern.startswith("*") and pattern.endswith("*"):
+                        # *pattern* - check if pattern (without *) is in filename
+                        pattern_clean = pattern.strip("*")
+                        if pattern_clean in filename_lower:
+                            matched_patterns.append(pattern)
+                    elif pattern.startswith("*"):
+                        # *pattern - check if filename ends with pattern
+                        pattern_clean = pattern.strip("*")
+                        if filename_lower.endswith(pattern_clean):
+                            matched_patterns.append(pattern)
+                    elif pattern.endswith("*"):
+                        # pattern* - check if filename starts with pattern
+                        pattern_clean = pattern.strip("*")
+                        if filename_lower.startswith(pattern_clean):
+                            matched_patterns.append(pattern)
+                    else:
+                        # Exact match or contains
+                        if pattern in filename_lower:
+                            matched_patterns.append(pattern)
+                
+                if matched_patterns:
+                    patterns_str = ", ".join(matched_patterns)
+                    filename_hints.append(f"FILENAME matches patterns '{patterns_str}' - STRONG INDICATOR this is a {file_type} file")
+        
+        filename_hint_text = "\n".join(filename_hints) if filename_hints else "No obvious file type indicator in filename"
+        
         description = f"""Analyze this CSV file from a MINERAL RESOURCES EVALUATION database and identify its type.
 
 CONTEXT: {heuristics['context']['description']}
 
 FILE: {analysis['filename']}
+FILENAME HINT: {filename_hint_text}
 ROWS: {analysis['rows']}
 COLUMNS ({len(analysis['columns'])}): {columns_str}
 
@@ -245,10 +291,14 @@ COLUMN DETAILS:
 {heuristics_text}
 
 YOUR TASK:
-1. Analyze the file structure and column names against the detailed heuristics above
-2. Check validation rules (ranges, data types, patterns)
-3. Identify the most likely file type with high confidence
-4. Explain your reasoning based on:
+1. **CRITICAL: Check the filename FIRST and give it HIGHEST PRIORITY** - See FILENAME HINT above for detected patterns
+   **If filename matches any pattern in the hint, it's a VERY STRONG indicator - use it!**
+
+2. Analyze the file structure and column names against the detailed heuristics above
+3. Check validation rules (ranges, data types, patterns)
+4. Identify the most likely file type with high confidence
+5. Explain your reasoning based on:
+   - **Filename hints (if present, give this HIGHEST weight - filename is often the most reliable indicator)**
    - Column name matches to common patterns (see heuristics above)
    - Data type validation
    - Value range validation (check ranges in heuristics above)
@@ -258,7 +308,7 @@ YOUR TASK:
 OUTPUT FORMAT:
 FILE TYPE: [type name]
 CONFIDENCE: [high/medium/low]
-REASONING: [detailed explanation using heuristics]
+REASONING: [detailed explanation using heuristics, including filename hints]
 USE CASE: [what this file is used for in mineral resources evaluation]"""
     else:
         # Fallback to basic description
@@ -605,14 +655,27 @@ def create_column_identification_task(agent, analysis, file_type_result, heurist
         required_sections_text = "\n\n".join(required_sections)
         output_format_text = "\n".join(output_format_lines)
         
-        # Build cross-reference info
+        # Build cross-reference info (only if multiple files were analyzed)
         cross_ref_info = ""
         if common_columns:
             cross_ref_info = "\n\nCROSS-REFERENCE ANALYSIS (columns appearing in multiple files - likely hole_id):\n"
-            for col_name, info in common_columns.items():
+            # Sort by: first columns in ALL files, then by count
+            sorted_columns = sorted(
+                common_columns.items(),
+                key=lambda x: (not x[1].get('in_all_files', False), -x[1]['count']),
+                reverse=False
+            )
+            for col_name, info in sorted_columns:
                 if col_name in analysis["columns"]:
+                    in_all = info.get('in_all_files', False)
+                    priority = "HIGHEST PRIORITY" if in_all else "HIGH PRIORITY"
                     cross_ref_info += f"  - {col_name}: Appears in {info['count']} files ({', '.join(info['files'])})\n"
-                    cross_ref_info += f"    This column appears in multiple files, which is a strong indicator it's the hole_id\n"
+                    if in_all:
+                        cross_ref_info += f"    ⚠️ {priority}: This column appears in ALL {info['count']} files - THIS IS VERY LIKELY THE HOLE_ID\n"
+                    else:
+                        cross_ref_info += f"    {priority}: This column appears in multiple files, which is a strong indicator it's the hole_id\n"
+            cross_ref_info += "\nCRITICAL RULE: If a column appears in ALL files, it has HIGHEST PRIORITY as hole_id, even if its name doesn't match common patterns like 'BHID' or 'HOLEID'.\n"
+        # If common_columns is empty (single file), the agent will rely on data characteristics only
         
         description = f"""Identify required columns for this {detected_file_type if detected_file_type else 'drilling data'} file from MINERAL RESOURCES EVALUATION database.
 
@@ -641,14 +704,22 @@ For each required column type listed above, identify:
 
 CRITICAL IDENTIFICATION RULES (use these even if column name is NOT in the common names list):
 
-1. HOLE ID identification:
-   - If file type is Collar: Look for column with HIGH uniqueness ratio (close to 1.0) - one unique value per row
-   - If file type is Survey/Assay/Lithology: Look for column that appears multiple times (lower uniqueness, but categorical)
-   - Check if column values match patterns like: alphanumeric codes (DH0001, BH-001, etc.)
-   - Type should be categorical/text/object
+1. HOLE ID identification (CRITICAL - follow this order):
+   - **HIGHEST PRIORITY**: If cross-reference info shows a column appears in ALL files, that column is VERY LIKELY the hole_id, even if its name doesn't match common patterns (e.g., "id" appearing in all files is more likely hole_id than "holeid" appearing only in one file)
+   - **HIGH PRIORITY**: If multiple files were analyzed and cross-reference info is provided, columns appearing in multiple (but not all) files are likely hole_id
+   - **SECONDARY METHOD** (when single file or no cross-reference): Use data characteristics:
+     * If file type is Collar: Look for column with HIGH uniqueness ratio (close to 1.0) - one unique value per row
+     * If file type is Survey/Assay/Lithology: Look for column that appears multiple times (lower uniqueness, but categorical)
+     * Check if column values match patterns like: alphanumeric codes (DH0001, BH-001, etc.)
+     * Type should be categorical/text/object
+   - **IMPORTANT**: When multiple files are analyzed, a column appearing in ALL files has HIGHEST PRIORITY over columns with "better" names that only appear in one file
    - Even if name is completely new, if it has these characteristics, it's likely the hole_id
 
 2. COORDINATES identification:
+   - **CRITICAL: Match column names CASE-INSENSITIVELY** - "easting" = "EASTING", "northing" = "NORTHING", "elevation" = "ELEVATION"
+   - Common X/East names: X, XCOLLAR, EAST, E, EASTING, X_UTM, XCOORD (all case variations)
+   - Common Y/North names: Y, YCOLLAR, NORTH, N, NORTHING, Y_UTM, YCOORD (all case variations)
+   - Common Z/Elevation names: Z, ZCOLLAR, ELEV, ELEVATION, RL, Z_UTM, ZCOORD (all case variations)
    - Look for 3 numeric columns with large values (thousands for X/Y, tens/hundreds for Z)
    - Check if values are in reasonable coordinate ranges
    - Even if names are X_UNKNOWN, Y_UNKNOWN, Z_UNKNOWN, if they have these characteristics, they're coordinates
@@ -669,8 +740,9 @@ CRITICAL IDENTIFICATION RULES (use these even if column name is NOT in the commo
    - Even if names are FROM_UNKNOWN, TO_UNKNOWN, if they have this relationship, they're depth intervals
 
 IMPORTANT:
-- Check column names case-insensitively
+- **ALWAYS check column names CASE-INSENSITIVELY** - "easting" matches "EASTING", "northing" matches "NORTHING", etc.
 - XCOLLAR = X coordinate, YCOLLAR = Y coordinate, ZCOLLAR = Z coordinate
+- EASTING = X coordinate, NORTHING = Y coordinate, ELEVATION = Z coordinate
 - BRG/Bearing = Azimuth (same thing)
 - DIP can be negative (range -90 to 90)
 - Verify data ranges match expected ranges
@@ -980,9 +1052,11 @@ def format_consolidated_summary(all_results, all_analyses=None):
         if "grades" in relevant_fields:
             grades = parsed_cols.get("grades", {}).get("found", [])
             if grades:
-                grades_str = ", ".join(grades)
-                comment = parsed_cols["grades"].get("comment", "OK")
-                lines.append(f"{file_type:<12} | {'Grades':<25} | {grades_str:<30} | {comment:<130}")
+                # Create a separate line for each grade column
+                base_comment = parsed_cols["grades"].get("comment", "OK")
+                for grade in grades:
+                    grade_comment = base_comment if len(grades) == 1 else f"Grade column identified: {grade}"
+                    lines.append(f"{file_type:<12} | {'Grade':<25} | {str(grade):<30} | {grade_comment:<130}")
         
         if "density" in relevant_fields:
             found = parsed_cols.get("density", {}).get("found", "NOT FOUND")
@@ -1141,14 +1215,17 @@ def format_consolidated_summary_json(all_results, all_analyses=None):
         if "grades" in relevant_fields:
             grades = parsed_cols.get("grades", {}).get("found", [])
             if grades:
-                grades_str = ", ".join(grades)
-                comment = parsed_cols["grades"].get("comment", "OK")
-                table_rows.append({
-                    "file_type": file_type,
-                    "field": "Grades",
-                    "found": grades_str,
-                    "comment": comment
-                })
+                # Create a separate row for each grade column
+                base_comment = parsed_cols["grades"].get("comment", "OK")
+                for grade in grades:
+                    # Use the base comment for each grade, or a simplified version
+                    grade_comment = base_comment if len(grades) == 1 else f"Grade column identified: {grade}"
+                    table_rows.append({
+                        "file_type": file_type,
+                        "field": "Grade",
+                        "found": str(grade),
+                        "comment": grade_comment
+                    })
                 identified_cols.update(grades)
         
         if "density" in relevant_fields:
@@ -1293,8 +1370,10 @@ def run_analysis(data_dir="data"):
     
     # Find potential hole_id columns by cross-referencing
     # A column that appears in multiple files with similar values is likely hole_id
+    # ALWAYS initialize common_columns (empty if only 1 file, populated if multiple files)
     common_columns = {}
-    if len(all_analyses) > 1:
+    total_files = len(all_analyses)
+    if total_files > 1:
         # Get all column names from all files
         all_column_names = set()
         for analysis in all_analyses.values():
@@ -1307,8 +1386,10 @@ def run_analysis(data_dir="data"):
                 # This column appears in multiple files - could be hole_id
                 common_columns[col_name] = {
                     "files": files_with_col,
-                    "count": len(files_with_col)
+                    "count": len(files_with_col),
+                    "in_all_files": len(files_with_col) == total_files  # True if appears in ALL files
                 }
+    # Note: If only 1 file, common_columns remains empty but process continues the same way
     
     results = []
     
@@ -1494,9 +1575,10 @@ def run_analysis_api(data_dir):
             if "error" not in analysis:
                 all_analyses[file_key] = analysis
         
-        # Find common columns
+        # Find common columns (ALWAYS initialize, even if empty for single file)
         common_columns = {}
-        if len(all_analyses) > 1:
+        total_files = len(all_analyses)
+        if total_files > 1:
             all_column_names = set()
             for analysis in all_analyses.values():
                 all_column_names.update(analysis["columns"])
@@ -1506,8 +1588,10 @@ def run_analysis_api(data_dir):
                 if len(files_with_col) > 1:
                     common_columns[col_name] = {
                         "files": files_with_col,
-                        "count": len(files_with_col)
+                        "count": len(files_with_col),
+                        "in_all_files": len(files_with_col) == total_files  # True if appears in ALL files
                     }
+        # Note: If only 1 file, common_columns remains empty but process continues the same way
         
         results = []
         
@@ -1515,6 +1599,14 @@ def run_analysis_api(data_dir):
         for file_key, file_path in files.items():
             analysis = analyze_csv_structure(file_path)
             if "error" in analysis:
+                # Still add to results with error info, don't skip
+                results.append({
+                    "file": file_key,
+                    "type": f"Error: {analysis.get('error', 'Unknown error')}",
+                    "columns": "Error analyzing file structure",
+                    "validation": "File could not be analyzed",
+                    "analysis": analysis
+                })
                 continue
             
             # TASK 1: Identify file type

@@ -6,6 +6,7 @@
   "file_types": {
     "Collar": {
       "description": "Collar/header file containing basic information for each drilling hole",
+      "filename_patterns": ["collar", "dh_collar", "*collar*"],
       "characteristics": {
         "structure": "One row per hole (file is generally unique per hole)",
         "hole_id_patterns": [
@@ -21,9 +22,9 @@
           "coordinates": {
             "required_count": 3,
             "common_names": {
-              "x": ["X", "XCOLLAR", "EAST", "E", "X_UTM", "EASTING", "XCOORD"],
-              "y": ["Y", "YCOLLAR", "NORTH", "N", "Y_UTM", "NORTHING", "YCOORD"],
-              "z": ["Z", "ZCOLLAR", "ELEV", "ELEVATION", "RL", "Z_UTM", "ZCOORD"]
+              "x": ["X", "XCOLLAR", "EAST", "E", "X_UTM", "EASTING", "XCOORD", "easting", "east", "x", "xcoord"],
+              "y": ["Y", "YCOLLAR", "NORTH", "N", "Y_UTM", "NORTHING", "YCOORD", "northing", "north", "y", "ycoord"],
+              "z": ["Z", "ZCOLLAR", "ELEV", "ELEVATION", "RL", "Z_UTM", "ZCOORD", "elevation", "elev", "z", "zcoord"]
             },
             "type": "numeric",
             "characteristics": "Spatial coordinates (UTM, local, etc.), values usually large (thousands for X/Y)"
@@ -56,6 +57,7 @@
     },
     "Survey": {
       "description": "Survey file containing hole geometry data (dip, azimuth) along depth",
+      "filename_patterns": ["survey", "surv", "*survey*", "*surv*"],
       "characteristics": {
         "structure": "Multiple rows per hole (measurements along depth)",
         "hole_id_patterns": [
@@ -101,6 +103,7 @@
     },
     "Assay": {
       "description": "Assay file containing chemical element concentrations in depth intervals",
+      "filename_patterns": ["assay", "teor", "*assay*", "*teor*"],
       "characteristics": {
         "structure": "Multiple rows per hole (depth intervals with grades)",
         "hole_id_patterns": [
@@ -157,6 +160,7 @@
     },
     "Lithology": {
       "description": "Lithology file containing rock type classification in depth intervals",
+      "filename_patterns": ["lith", "litho", "lithology", "lito", "*lith*", "*lito*"],
       "characteristics": {
         "structure": "Multiple rows per hole (depth intervals with lithological classification)",
         "hole_id_patterns": [
@@ -196,6 +200,7 @@
     },
     "Density": {
       "description": "Density file containing density values in depth intervals",
+      "filename_patterns": ["density", "dens", "*density*", "*dens*"],
       "characteristics": {
         "structure": "Multiple rows per hole (intervals with density measurements)",
         "required_columns": {
@@ -218,6 +223,46 @@
         "validation_rules": {
           "density_range": "Density between 1.0 and 10.0 g/cm³",
           "interval_validity": "TO > FROM"
+        }
+      }
+    },
+    "Alteration": {
+      "description": "Alteration file containing alteration type classification in depth intervals (similar to Lithology)",
+      "filename_patterns": ["alteration", "alt", "*alteration*", "*alt*"],
+      "characteristics": {
+        "structure": "Multiple rows per hole (depth intervals with alteration classification)",
+        "hole_id_patterns": [
+          "BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "BH", "HOLE"
+        ],
+        "required_columns": {
+          "hole_id": {
+            "names": ["BHID", "HOLEID", "HOLE_ID", "DRILLHOLE", "BH"],
+            "type": "categorical/text"
+          },
+          "depth_intervals": {
+            "from": {
+              "names": ["FROM", "FROM_DEPTH", "START", "TOP"],
+              "type": "numeric"
+            },
+            "to": {
+              "names": ["TO", "TO_DEPTH", "END", "BOTTOM"],
+              "type": "numeric"
+            }
+          },
+          "alteration_code": {
+            "names": ["ALT", "ALTERATION", "ALT_CODE", "ALT_TYPE", "ALTERATION_TYPE"],
+            "type": "categorical",
+            "common_values": [
+              "SER", "SERICITE", "CHL", "CHLORITE", "EPI", "EPIDOTE", "CARB", "CARBONATE",
+              "SIL", "SILICIFICATION", "ARG", "ARGILLIC", "PROP", "PROPYLITIC"
+            ],
+            "characteristics": "Short codes or names representing alteration types"
+          }
+        },
+        "validation_rules": {
+          "interval_validity": "TO > FROM",
+          "alteration_categorical": "Alteration column must be categorical with limited values",
+          "multiple_rows_per_hole": "Multiple rows per hole"
         }
       }
     }

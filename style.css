@@ -379,6 +379,97 @@ tbody tr:last-child td {
     font-weight: 500;
 }
 
+/* Approval checkbox styling */
+.approve-checkbox {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    accent-color: #667eea;
+    border-radius: 4px;
+}
+
+.approve-cell {
+    text-align: center;
+    padding: 8px 12px;
+}
+
+/* Row styling based on approval status */
+tbody tr.approved {
+    background: #e8f5e9;
+}
+
+tbody tr.approved:hover {
+    background: #c8e6c9;
+}
+
+tbody tr.rejected {
+    background: #ffebee;
+    opacity: 0.7;
+}
+
+tbody tr.rejected:hover {
+    background: #ffcdd2;
+}
+
+/* Approval stats */
+.approval-stats {
+    margin-bottom: 15px;
+    padding: 15px;
+    background: #f8f9ff;
+    border-radius: 8px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    font-weight: 600;
+    flex-wrap: wrap;
+}
+
+.approval-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: white;
+    border-radius: 6px;
+    border: 2px solid #e0e0e0;
+    font-size: 0.9em;
+}
+
+.approval-stat.approved {
+    border-color: #4caf50;
+    color: #4caf50;
+}
+
+.approval-stat.rejected {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.approval-stat.pending {
+    border-color: #ff9800;
+    color: #ff9800;
+}
+
+.disclaimer {
+    padding: 15px 20px;
+    background: #fff3cd;
+    border-top: 2px solid #ffc107;
+    margin-top: 20px;
+    font-size: 0.85em;
+    color: #856404;
+    text-align: center;
+}
+
+.disclaimer p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.disclaimer strong {
+    color: #856404;
+    font-weight: 600;
+}
+
 @media (max-width: 768px) {
     header h1 {
         font-size: 1.8em;
@@ -394,6 +485,11 @@ tbody tr:last-child td {
     
     th, td {
         padding: 10px 8px;
+    }
+    
+    .disclaimer {
+        font-size: 0.8em;
+        padding: 12px 15px;
     }
 }
 

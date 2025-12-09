@@ -229,17 +229,57 @@ function displayResults(results) {
         return;
     }
     
-    results.forEach(row => {
+    // Initialize approval stats
+    let approvedCount = 0;
+    let rejectedCount = 0;
+    const totalCount = results.length;
+    
+    results.forEach((row, index) => {
         const tr = document.createElement('tr');
+        tr.dataset.index = index;
         
+        // Approve checkbox cell
+        const approveTd = document.createElement('td');
+        approveTd.className = 'approve-cell';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'approve-checkbox';
+        checkbox.id = `approve-${index}`;
+        checkbox.checked = true; // Default to approved
+        approvedCount++;
+        
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                tr.classList.remove('rejected');
+                tr.classList.add('approved');
+                approvedCount++;
+                rejectedCount--;
+            } else {
+                tr.classList.remove('approved');
+                tr.classList.add('rejected');
+                approvedCount--;
+                rejectedCount++;
+            }
+            updateApprovalStats(approvedCount, rejectedCount, totalCount);
+        });
+        
+        approveTd.appendChild(checkbox);
+        tr.appendChild(approveTd);
+        tr.classList.add('approved');
+        
+        // File Type
         const fileTypeTd = document.createElement('td');
         fileTypeTd.className = 'file-type';
         fileTypeTd.textContent = row.file_type;
+        tr.appendChild(fileTypeTd);
         
+        // Field
         const fieldTd = document.createElement('td');
         fieldTd.className = 'field-name';
         fieldTd.textContent = row.field;
+        tr.appendChild(fieldTd);
         
+        // Found Column
         const foundTd = document.createElement('td');
         const foundSpan = document.createElement('span');
         foundSpan.className = 'found-column';
@@ -252,21 +292,41 @@ function displayResults(results) {
         }
         
         foundTd.appendChild(foundSpan);
+        tr.appendChild(foundTd);
         
+        // Comment
         const commentTd = document.createElement('td');
         commentTd.className = 'comment';
         commentTd.textContent = row.comment;
-        
-        tr.appendChild(fileTypeTd);
-        tr.appendChild(fieldTd);
-        tr.appendChild(foundTd);
         tr.appendChild(commentTd);
         
         resultsTableBody.appendChild(tr);
     });
     
+    updateApprovalStats(approvedCount, rejectedCount, totalCount);
     resultsSection.style.display = 'block';
     resultsSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+function updateApprovalStats(approved, rejected, total) {
+    const approvalStatsDiv = document.getElementById('approvalStats');
+    if (!approvalStatsDiv) return;
+    
+    approvalStatsDiv.style.display = 'flex';
+    approvalStatsDiv.innerHTML = `
+        <div class="approval-stat approved">
+            <span>✓</span>
+            <span>Approved: ${approved}</span>
+        </div>
+        <div class="approval-stat rejected">
+            <span>✗</span>
+            <span>Rejected: ${rejected}</span>
+        </div>
+        <div class="approval-stat pending">
+            <span>○</span>
+            <span>Total: ${total}</span>
+        </div>
+    `;
 }
 
 function showError(message) {
